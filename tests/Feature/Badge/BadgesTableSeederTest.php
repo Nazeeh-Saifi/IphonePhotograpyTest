@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Badge;
 
 use Database\Seeders\BadgeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,7 +11,7 @@ class BadgesTableSeederTest extends TestCase
 {
     use RefreshDatabase;
     /**
-     * A basic feature test example.
+     * test badges table seeder works
      */
     public function test_that_badges_table_has_initial_values(): void
     {

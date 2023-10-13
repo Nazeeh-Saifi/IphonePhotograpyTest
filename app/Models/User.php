@@ -66,5 +66,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Lesson::class)->wherePivot('watched', true);
     }
-}
 
+    /**
+     * The badges of a user.
+     */
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class);
+    }
+}
