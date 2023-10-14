@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Badge;
 
 use App\Models\Badge;
 use App\Models\Comment;
