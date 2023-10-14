@@ -21,7 +21,7 @@ class BadgesTableSeederTest extends TestCase
             ['name' => 'Advanced', 'achievements_count' => 8],
             ['name' => 'Master', 'achievements_count' => 10],
         ];
-        $this->seed(BadgeSeeder::class);
+        //$this->seed(BadgeSeeder::class);
 
         foreach ($badges as $badge) {
             $this->assertDatabaseHas('badges', ['name' => $badge['name'], 'achievements_count' => $badge['achievements_count']]);

@@ -45,7 +45,7 @@ class CommentWrittenTest extends TestCase
         Event::fake();
         $comment = Comment::factory()->create();
         $user = $comment->user;
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $achievement = Achievement::where('type', 'comments_written')->where('count_to_reach', 1)->first();
 
         $comment_written_event = new CommentWritten($comment);
@@ -67,7 +67,7 @@ class CommentWrittenTest extends TestCase
      */
     public function test_the_CommentWrittenListener_did_not_fire_when_achievement_not_reached(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $user = User::factory()->create();
         $comments = Comment::factory()->count(2)->create(["user_id" => $user->id]);
 
@@ -81,7 +81,7 @@ class CommentWrittenTest extends TestCase
 
     public function test_the_number_of_previous_comments_written_achievements_is_correct_having_one_previous_achievement(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $user = User::factory()->create();
         $comment_written_listener = new CommentWrittenListener();
 
@@ -97,7 +97,7 @@ class CommentWrittenTest extends TestCase
 
     public function test_the_number_of_previous_comments_written_achievements_is_correct_having_more_than_one_previous_achievement(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $user = User::factory()->create();
         $comment_written_listener = new CommentWrittenListener();
 

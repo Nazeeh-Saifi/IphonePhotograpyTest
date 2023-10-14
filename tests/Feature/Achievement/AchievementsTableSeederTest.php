@@ -15,7 +15,7 @@ class AchievementsTableSeederTest extends TestCase
      */
     public function test_the_achievements_table_has_initial_values(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
 
         $lessons_watched_achievements = [
             ['count_to_reach' => 1, 'name' => 'First Lesson Watched'],

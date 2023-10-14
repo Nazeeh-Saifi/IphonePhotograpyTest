@@ -23,7 +23,7 @@ class BadgeAndUserRelationshipTest extends TestCase
         $user = User::factory()->create();
 
         // seed the badges 
-        $this->seed(BadgeSeeder::class);
+        //$this->seed(BadgeSeeder::class);
 
         // get a number of badges
         $number_of_badges = 2;

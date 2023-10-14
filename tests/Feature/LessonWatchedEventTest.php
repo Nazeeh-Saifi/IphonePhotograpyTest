@@ -48,7 +48,7 @@ class LessonWatchedEventTest extends TestCase
         $user = User::factory()->create();
         $user->lessons()->attach($lesson);
 
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $achievement = Achievement::where('type', 'lessons_watched')->where('count_to_reach', 1)->first();
 
         $lesson_watched_event = new LessonWatched($lesson, $user);
@@ -70,7 +70,7 @@ class LessonWatchedEventTest extends TestCase
      */
     public function test_the_LessonWatchedListener_did_not_fire_when_achievement_not_reached(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $user = User::factory()->create();
         $lessons = Lesson::factory()->count(2)->create();
         $user->lessons()->attach($lessons);
@@ -85,7 +85,7 @@ class LessonWatchedEventTest extends TestCase
 
     public function test_the_number_of_previous_lessons_watched_achievements_is_correct_having_one_achievement(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $user = User::factory()->create();
         $lesson_watched_listener = new LessonWatchedListener();
 
@@ -105,7 +105,7 @@ class LessonWatchedEventTest extends TestCase
 
     public function test_the_number_of_previous_lessons_watched_achievements_is_correct_having_more_than_one_achievement(): void
     {
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
         $user = User::factory()->create();
         $lesson_watched_listener = new LessonWatchedListener();
         $lessons = Lesson::factory()->count(6)->create();

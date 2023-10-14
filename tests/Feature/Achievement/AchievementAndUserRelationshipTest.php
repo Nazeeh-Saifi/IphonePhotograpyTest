@@ -21,7 +21,7 @@ class AchievementAndUserRelationshipTest extends TestCase
         $user = User::factory()->create();
 
         // seed the achievements 
-        $this->seed(AchievementSeeder::class);
+        //$this->seed(AchievementSeeder::class);
 
         // get a number of achievements
         $number_of_achievements = 2;
