@@ -20,7 +20,9 @@ class BadgeAndUserRelationshipTest extends TestCase
     public function test_the_user_can_have_badges(): void
     {
         // Create a user
-        $user = User::factory()->create();
+        $user = User::withoutEvents(function () {
+            return User::factory()->create();
+        });
 
         // seed the badges 
         //$this->seed(BadgeSeeder::class);
@@ -58,6 +60,17 @@ class BadgeAndUserRelationshipTest extends TestCase
             $this->assertTrue($user->badges->contains($badge));
         }
 
+    }
+
+    public function test_the_newly_created_user_have_beginner_badge(): void
+    {
+        $beginner_badge = Badge::where('achievements_count', 0)->first();
+
+        $user = User::factory()->create();
+        $badge = $user->badges()->first();
+
+        $this->assertCount(1, $user->badges);
+        $this->assertTrue($beginner_badge->is($badge));
     }
 
 
