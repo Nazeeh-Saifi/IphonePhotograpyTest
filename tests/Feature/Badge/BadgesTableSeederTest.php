@@ -15,16 +15,16 @@ class BadgesTableSeederTest extends TestCase
      */
     public function test_that_badges_table_has_initial_values(): void
     {
-        $badges_names = [
-            'Beginner',
-            'Intermediate',
-            'Advanced',
-            'Master',
+        $badges = [
+            ['name' => 'Beginner', 'achievements_count' => 0],
+            ['name' => 'Intermediate', 'achievements_count' => 4],
+            ['name' => 'Advanced', 'achievements_count' => 8],
+            ['name' => 'Master', 'achievements_count' => 10],
         ];
         $this->seed(BadgeSeeder::class);
 
-        foreach ($badges_names as $badge_name) {
-            $this->assertDatabaseHas('badges', ['name' => $badge_name]);
+        foreach ($badges as $badge) {
+            $this->assertDatabaseHas('badges', ['name' => $badge['name'], 'achievements_count' => $badge['achievements_count']]);
         }
 
 

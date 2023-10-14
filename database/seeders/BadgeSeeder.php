@@ -13,14 +13,14 @@ class BadgeSeeder extends Seeder
     public function run(): void
     {
         //
-        $badges_names = [
-            'Beginner',
-            'Intermediate',
-            'Advanced',
-            'Master',
+        $badges = [
+            ['name' => 'Beginner', 'achievements_count' => 0],
+            ['name' => 'Intermediate', 'achievements_count' => 4],
+            ['name' => 'Advanced', 'achievements_count' => 8],
+            ['name' => 'Master', 'achievements_count' => 10],
         ];
-        foreach ($badges_names as $badge_name) {
-            Badge::create(["name" => $badge_name]);
+        foreach ($badges as $badge) {
+            Badge::create(["name" => $badge['name'], 'achievements_count' => $badge['achievements_count']]);
         }
     }
 }
