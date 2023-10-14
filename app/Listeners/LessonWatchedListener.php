@@ -8,10 +8,12 @@ use App\Models\Achievement;
 use App\Models\Lesson;
 use DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Queue\InteractsWithQueue;
 
 class LessonWatchedListener
 {
+    use RefreshDatabase;
     /**
      * Create the event listener.
      */

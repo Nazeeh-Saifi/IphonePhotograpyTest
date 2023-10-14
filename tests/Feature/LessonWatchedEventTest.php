@@ -16,6 +16,7 @@ use Tests\TestCase;
 
 class LessonWatchedEventTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * make sure that the LessonWatched event is dispatched with correct data
      */

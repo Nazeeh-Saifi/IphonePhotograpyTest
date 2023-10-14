@@ -11,6 +11,7 @@ use Tests\TestCase;
 
 class AchievementAndUserRelationshipTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * test user and achievement relationship attaching/detaching
      */
