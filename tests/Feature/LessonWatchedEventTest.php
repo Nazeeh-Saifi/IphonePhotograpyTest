@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Events\AchievementUnlocked;
+use App\Events\BadgeUnlocked;
 use App\Events\LessonWatched;
 use App\Listeners\LessonWatchedListener;
 use App\Models\Achievement;
+use App\Models\Badge;
 use App\Models\Lesson;
 use App\Models\User;
 use Database\Seeders\AchievementSeeder;
@@ -120,5 +122,29 @@ class LessonWatchedEventTest extends TestCase
         $this->assertCount(2, $user->achievements);
     }
 
+
+    public function test_the_LessonsWatchedListener_fired_BadgeUnlocked_event(): void
+    {
+        $user = User::factory()->create();
+        $lesson_watched_listener = new LessonWatchedListener();
+        $lessons = Lesson::factory()->count(25)->create();
+        $badge = Badge::where('achievements_count', 4)->first();
+
+        Event::fake();
+        foreach ($lessons as $lesson) {
+            $user->lessons()->attach($lesson);
+            $lesson_watched_event = new LessonWatched($lesson, $user);
+            $lesson_watched_listener->handle($lesson_watched_event);
+        }
+
+        $this->assertCount(25, $user->lessons);
+        $this->assertCount(4, $user->achievements);
+        Event::assertDispatched(
+            BadgeUnlocked::class,
+            function (BadgeUnlocked $event) use ($badge, $user) {
+                return ($event->badge_name === $badge->name) && $user->is($event->user);
+            }
+        );
+    }
 
 }

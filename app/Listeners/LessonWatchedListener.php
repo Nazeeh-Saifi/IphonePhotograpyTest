@@ -3,8 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\AchievementUnlocked;
+use App\Events\BadgeUnlocked;
 use App\Events\LessonWatched;
 use App\Models\Achievement;
+use App\Models\Badge;
 use App\Models\Lesson;
 use DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -40,6 +42,7 @@ class LessonWatchedListener
             $user->achievements()->attach($achievement);
             AchievementUnlocked::dispatch($achievement->name, $user);
         }
+        $this->handleBadgeUnlocking($user);
     }
 
     function getAchievementByNumberOfLessonsAndType(int $number_of_lessons, string $type): Achievement|null
@@ -50,5 +53,17 @@ class LessonWatchedListener
             ->first();
 
         return $achievement;
+    }
+
+    function handleBadgeUnlocking($user): void
+    {
+        $number_of_achievements = $user->achievements()->count();
+        if ($number_of_achievements > 0) {
+            $badge = Badge::where('achievements_count', $number_of_achievements)->first();
+        }
+        if (isset($badge)) {
+            $user->badges()->attach($badge);
+            BadgeUnlocked::dispatch($badge->name, $user);
+        }
     }
 }
