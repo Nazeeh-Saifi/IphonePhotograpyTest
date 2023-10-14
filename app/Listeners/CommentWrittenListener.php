@@ -3,8 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\AchievementUnlocked;
+use App\Events\BadgeUnlocked;
 use App\Events\CommentWritten;
 use App\Models\Achievement;
+use App\Models\Badge;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,6 +41,7 @@ class CommentWrittenListener
             $user->achievements()->attach($achievement);
             AchievementUnlocked::dispatch($achievement->name, $user);
         }
+        $this->handleBadgeUnlocking($user);
 
     }
 
@@ -51,4 +54,16 @@ class CommentWrittenListener
 
         return $achievement;
     }
+    function handleBadgeUnlocking($user): void
+    {
+        $number_of_achievements = $user->achievements()->count();
+        if ($number_of_achievements > 0) {
+            $badge = Badge::where('achievements_count', $number_of_achievements)->first();
+        }
+        if (isset($badge)) {
+            $user->badges()->attach($badge);
+            BadgeUnlocked::dispatch($badge->name, $user);
+        }
+    }
+
 }

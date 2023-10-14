@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Badge;
+use App\Models\Comment;
 use App\Models\User;
 use Database\Seeders\BadgeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,6 +68,17 @@ class BadgeAndUserRelationshipTest extends TestCase
         $beginner_badge = Badge::where('achievements_count', 0)->first();
 
         $user = User::factory()->create();
+        $badge = $user->badges()->first();
+
+        $this->assertCount(1, $user->badges);
+        $this->assertTrue($beginner_badge->is($badge));
+    }
+
+    public function test_the_newly_created_user_by_comment_factory_have_beginner_badge(): void
+    {
+        $beginner_badge = Badge::where('achievements_count', 0)->first();
+
+        $user = Comment::factory()->create()->user;
         $badge = $user->badges()->first();
 
         $this->assertCount(1, $user->badges);

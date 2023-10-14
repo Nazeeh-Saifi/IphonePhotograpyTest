@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Events\AchievementUnlocked;
+use App\Events\BadgeUnlocked;
 use App\Events\CommentWritten;
 use App\Listeners\CommentWrittenListener;
 use App\Models\Achievement;
+use App\Models\Badge;
 use App\Models\Comment;
 use App\Models\User;
 use Database\Seeders\AchievementSeeder;
@@ -110,5 +112,29 @@ class CommentWrittenTest extends TestCase
         $this->assertCount(5, $user->comments);
         $this->assertCount(3, $user->achievements);
     }
+
+    public function test_the_CommentWrittenListener_fired_BadgeUnlocked_event(): void
+    {
+        $user = User::factory()->create();
+        $comment_written_listener = new CommentWrittenListener();
+        $badge = Badge::where('achievements_count', 4)->first();
+
+        Event::fake();
+        for ($i = 0; $i < 10; $i++) {
+            $comment = Comment::factory()->create(['user_id' => $user->id]);
+            $comment_written_event = new CommentWritten($comment);
+            $comment_written_listener->handle($comment_written_event);
+        }
+
+        $this->assertCount(4, $user->achievements);
+        $this->assertCount(2, $user->badges);
+        Event::assertDispatched(
+            BadgeUnlocked::class,
+            function (BadgeUnlocked $event) use ($badge, $user) {
+                return ($event->badge_name === $badge->name) && $user->is($event->user);
+            }
+        );
+    }
+
 
 }
