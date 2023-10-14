@@ -64,4 +64,61 @@ class LessonWatchedEventTest extends TestCase
             }
         );
     }
+
+    /**
+     * make sure that the LessonWatchedListener did not fire when achievement not reached
+     */
+    public function test_the_LessonWatchedListener_did_not_fire_when_achievement_not_reached(): void
+    {
+        $this->seed(AchievementSeeder::class);
+        $user = User::factory()->create();
+        $lessons = Lesson::factory()->count(2)->create();
+        $user->lessons()->attach($lessons);
+        Event::fake();
+
+        $lesson_watched_listener = new LessonWatchedListener();
+        $lesson_watched_event = new LessonWatched($lessons[1], $user);
+        $lesson_watched_listener->handle($lesson_watched_event);
+
+        Event::assertNotDispatched(AchievementUnlocked::class);
+    }
+
+    public function test_the_number_of_previous_lessons_watched_achievements_is_correct_having_one_achievement(): void
+    {
+        $this->seed(AchievementSeeder::class);
+        $user = User::factory()->create();
+        $lesson_watched_listener = new LessonWatchedListener();
+
+        $lesson1 = Lesson::factory()->create();
+        $user->lessons()->attach($lesson1);
+        $lesson_watched_event1 = new LessonWatched($lesson1, $user);
+        $lesson_watched_listener->handle($lesson_watched_event1);
+
+        $lesson2 = Lesson::factory()->create();
+        $user->lessons()->attach($lesson2);
+        $lesson_watched_event2 = new LessonWatched($lesson2, $user);
+        $lesson_watched_listener->handle($lesson_watched_event2);
+
+        $this->assertCount(2, $user->lessons);
+        $this->assertCount(1, $user->achievements);
+    }
+
+    public function test_the_number_of_previous_lessons_watched_achievements_is_correct_having_more_than_one_achievement(): void
+    {
+        $this->seed(AchievementSeeder::class);
+        $user = User::factory()->create();
+        $lesson_watched_listener = new LessonWatchedListener();
+        $lessons = Lesson::factory()->count(6)->create();
+
+        foreach ($lessons as $lesson) {
+            $user->lessons()->attach($lesson);
+            $lesson_watched_event = new LessonWatched($lesson, $user);
+            $lesson_watched_listener->handle($lesson_watched_event);
+        }
+
+        $this->assertCount(6, $user->lessons);
+        $this->assertCount(2, $user->achievements);
+    }
+
+
 }

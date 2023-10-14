@@ -7,6 +7,7 @@ use App\Events\CommentWritten;
 use App\Listeners\CommentWrittenListener;
 use App\Models\Achievement;
 use App\Models\Comment;
+use App\Models\User;
 use Database\Seeders\AchievementSeeder;
 use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -59,6 +60,55 @@ class CommentWrittenTest extends TestCase
                 return ($achievement->name === $event->achievement_name) && $event->user->is($user);
             }
         );
+    }
+
+    /**
+     * make sure that the CommentWrittenListener did not fire when achievement not reached
+     */
+    public function test_the_CommentWrittenListener_did_not_fire_when_achievement_not_reached(): void
+    {
+        $this->seed(AchievementSeeder::class);
+        $user = User::factory()->create();
+        $comments = Comment::factory()->count(2)->create(["user_id" => $user->id]);
+
+        Event::fake();
+        $comment_written_listener = new CommentWrittenListener();
+        $comment_written_event = new CommentWritten($comments[1]);
+        $comment_written_listener->handle($comment_written_event);
+
+        Event::assertNotDispatched(AchievementUnlocked::class);
+    }
+
+    public function test_the_number_of_previous_comments_written_achievements_is_correct_having_one_previous_achievement(): void
+    {
+        $this->seed(AchievementSeeder::class);
+        $user = User::factory()->create();
+        $comment_written_listener = new CommentWrittenListener();
+
+        for ($i = 0; $i < 2; $i++) {
+            $comment = Comment::factory()->create(['user_id' => $user->id]);
+            $comment_written_event = new CommentWritten($comment);
+            $comment_written_listener->handle($comment_written_event);
+        }
+
+        $this->assertCount(2, $user->comments);
+        $this->assertCount(1, $user->achievements);
+    }
+
+    public function test_the_number_of_previous_comments_written_achievements_is_correct_having_more_than_one_previous_achievement(): void
+    {
+        $this->seed(AchievementSeeder::class);
+        $user = User::factory()->create();
+        $comment_written_listener = new CommentWrittenListener();
+
+        for ($i = 0; $i < 5; $i++) {
+            $comment = Comment::factory()->create(['user_id' => $user->id]);
+            $comment_written_event = new CommentWritten($comment);
+            $comment_written_listener->handle($comment_written_event);
+        }
+
+        $this->assertCount(5, $user->comments);
+        $this->assertCount(3, $user->achievements);
     }
 
 }
