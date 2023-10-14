@@ -36,9 +36,8 @@ class LessonWatchedListener
         // get the achievement using number of comments or null
         $achievement = $this->getAchievementByNumberOfLessonsAndType($number_of_lessons, 'lessons_watched');
 
-        $user->achievements()->attach($achievement);
-
         if (!is_null($achievement)) {
+            $user->achievements()->attach($achievement);
             AchievementUnlocked::dispatch($achievement->name, $user);
         }
     }
