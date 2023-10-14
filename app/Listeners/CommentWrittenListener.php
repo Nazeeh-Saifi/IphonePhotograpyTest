@@ -35,7 +35,7 @@ class CommentWrittenListener
         // get the achievement using number of comments or null
         $achievement = $this->getAchievementByNumberOfCommentsAndType($number_of_comments, 'comments_written');
 
-        $user->achievements()->attach([$achievement->id]);
+        $user->achievements()->attach($achievement);
 
         if (!is_null($achievement)) {
             AchievementUnlocked::dispatch($achievement->name, $user);

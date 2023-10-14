@@ -32,6 +32,8 @@ class CommentWrittenTest extends TestCase
                 return ($comment->id === $event->comment->id) && ($comment->user_id === $event->comment->user_id);
             }
         );
+        // make sure that event -> listener are added to EventServiceProvider
+        Event::assertListening(CommentWritten::class, CommentWrittenListener::class);
     }
 
     /**
