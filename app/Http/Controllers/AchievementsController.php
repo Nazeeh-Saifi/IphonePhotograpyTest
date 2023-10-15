@@ -44,7 +44,7 @@ class AchievementsController extends Controller
 
         $remaining_to_unlock_next_badge = 0;
         if (!is_null($next_badge)) {
-            $remaining_to_unlock_next_badge = ($next_badge->achievements_count - $current_badge->achievements_count);
+            $remaining_to_unlock_next_badge = ($next_badge->achievements_count - $unlocked_achievements->count());
         }
 
         return response()->json([

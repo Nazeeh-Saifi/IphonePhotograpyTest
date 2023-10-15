@@ -167,5 +167,22 @@ class ExampleTest extends TestCase
             ]);
     }
 
+    public function test_the_application_returns_a_successful_response_and_correct_remaining_to_unlock_next_badge_for_user_with_5_achievements(): void
+    {
+        $number_of_achievements = 5;
+        $user = User::factory()->create();
+        $achievements = Achievement::all()->random($number_of_achievements);
+        $user->achievements()->attach($achievements);
+        $current_badge = Badge::where('achievements_count', '<', $number_of_achievements)->orderBy('achievements_count', 'desc')->first();
+        $user->badges()->attach($current_badge);
+        $next_badge = Badge::where('achievements_count', '>', $number_of_achievements)->orderBy('achievements_count')->first();
+
+        $response = $this->get("/users/{$user->id}/achievements");
+
+        $response->assertOk()
+            ->assertJsonFragment([
+                'remaining_to_unlock_next_badge' => $next_badge->achievements_count - $number_of_achievements,
+            ]);
+    }
 
 }
