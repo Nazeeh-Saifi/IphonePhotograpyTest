@@ -33,7 +33,7 @@ class LessonWatchedListener
         $user = $event->user;
 
         //get number of lessons
-        $number_of_lessons = DB::table('lesson_user')->where('user_id', $user->id)->count();
+        $number_of_lessons = DB::table('lesson_user')->where('user_id', $user->id)->where('watched', 1)->count();
 
         // get the achievement using number of comments or null
         $achievement = $this->getAchievementByNumberOfLessonsAndType($number_of_lessons, 'lessons_watched');

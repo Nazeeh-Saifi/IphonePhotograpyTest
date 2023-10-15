@@ -48,7 +48,7 @@ class LessonWatchedEventTest extends TestCase
         Event::fake();
         $lesson = Lesson::factory()->create();
         $user = User::factory()->create();
-        $user->lessons()->attach($lesson);
+        $user->lessons()->attach($lesson, ['watched' => 1]);
 
         //$this->seed(AchievementSeeder::class);
         $achievement = Achievement::where('type', 'lessons_watched')->where('count_to_reach', 1)->first();
@@ -92,12 +92,12 @@ class LessonWatchedEventTest extends TestCase
         $lesson_watched_listener = new LessonWatchedListener();
 
         $lesson1 = Lesson::factory()->create();
-        $user->lessons()->attach($lesson1);
+        $user->lessons()->attach($lesson1, ['watched' => 1]);
         $lesson_watched_event1 = new LessonWatched($lesson1, $user);
         $lesson_watched_listener->handle($lesson_watched_event1);
 
         $lesson2 = Lesson::factory()->create();
-        $user->lessons()->attach($lesson2);
+        $user->lessons()->attach($lesson2, ['watched' => 1]);
         $lesson_watched_event2 = new LessonWatched($lesson2, $user);
         $lesson_watched_listener->handle($lesson_watched_event2);
 
@@ -113,7 +113,7 @@ class LessonWatchedEventTest extends TestCase
         $lessons = Lesson::factory()->count(6)->create();
 
         foreach ($lessons as $lesson) {
-            $user->lessons()->attach($lesson);
+            $user->lessons()->attach($lesson, ['watched' => 1]);
             $lesson_watched_event = new LessonWatched($lesson, $user);
             $lesson_watched_listener->handle($lesson_watched_event);
         }
@@ -132,7 +132,7 @@ class LessonWatchedEventTest extends TestCase
 
         Event::fake();
         foreach ($lessons as $lesson) {
-            $user->lessons()->attach($lesson);
+            $user->lessons()->attach($lesson, ['watched' => 1]);
             $lesson_watched_event = new LessonWatched($lesson, $user);
             $lesson_watched_listener->handle($lesson_watched_event);
         }
