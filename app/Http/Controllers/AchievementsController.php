@@ -31,20 +31,27 @@ class AchievementsController extends Controller
             ->first();
 
         $next_available_achievements = [];
-        array_push($next_available_achievements, $next_comments_written_achievement?->name ?? []);
-        array_push($next_available_achievements, $next_lessons_watched_achievement?->name ?? []);
+        if (!is_null($next_comments_written_achievement)) {
+            array_push($next_available_achievements, $next_comments_written_achievement->name);
+        }
 
-        $current_badge = $user->badges()->latest()->firstOrFail();
+        if (!is_null($next_lessons_watched_achievement)) {
+            array_push($next_available_achievements, $next_lessons_watched_achievement->name);
+        }
+        $current_badge = $user->badges()->orderBy('achievements_count', 'desc')->firstOrFail();
 
-        $next_badge = Badge::where('achievements_count', '>', $current_badge->achievements_count)->orderBy('achievements_count')->firstOrFail();
+        $next_badge = Badge::where('achievements_count', '>', $current_badge->achievements_count)->orderBy('achievements_count')->first();
 
-        $remaining_to_unlock_next_badge = ($next_badge?->achievements_count - $current_badge->achievements_count) ?? 0;
+        $remaining_to_unlock_next_badge = 0;
+        if (!is_null($next_badge)) {
+            $remaining_to_unlock_next_badge = ($next_badge->achievements_count - $current_badge->achievements_count);
+        }
 
         return response()->json([
             'unlocked_achievements' => $unlocked_achievements,
             'next_available_achievements' => $next_available_achievements,
             'current_badge' => $current_badge->name,
-            'next_badge' => $next_badge->name,
+            'next_badge' => $next_badge?->name ?? '',
             'remaining_to_unlock_next_badge' => $remaining_to_unlock_next_badge,
         ]);
     }
